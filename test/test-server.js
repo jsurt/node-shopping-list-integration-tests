@@ -150,3 +150,83 @@ describe("Shopping List", function() {
     );
   });
 });
+
+describe('Recipes', function() {
+
+  before(function() {
+    return runServer();
+  });
+
+  after(function() {
+    return closeServer();
+  })
+
+  //Tests for GET
+  it('should return recipes on GET', function() {
+    return chai
+    .request(app)
+    .get('/recipes')
+    .then(function(res) {
+      expect(res).to.have.status(200);
+      expect(res).to.be.json;
+      expect(res).to.be.a('object');
+      expect(res.body.length).to.be.at.least(1);
+      const expectedGETKeys = ['id', 'name', 'ingredients'];
+      res.body.forEach(function(item) {
+        expect(res).to.include.keys(expectedGETKeys);
+      });
+    });
+  });
+
+  //Tests for POST
+  it('should create recipes on POST', function() {
+    const newItem = {name: 'PBandJ', ingredients: 'peanut butter, jelly, bread'};
+    return chai
+    .request(app)
+    .post('/recipes')
+    .send(newItem)
+    .then(function(res) {
+      expect(res).to.have.status(201);
+      expect(res).to.be.json;
+      expect(res).to.be.a('object');
+      expect(res).id.to.not.equal(null);
+      expect(res).to.include.keys('id', 'name', 'ingredients');
+      expect(res).body.to.deep.equal(Object.assign(newItem, {id: res.body.id}));
+    });
+  });
+
+  //Tests for PUT
+  it('should update items on PUT', function() {
+    const updateItem = {
+      name: 'crackers',
+      ingredients: 'a box of crackers'
+    };
+    return chai.request(app)
+    .get('/recipes')
+    .then(function(res) {
+      updateItem.id = res.body[0].id;
+      return chai.request(app)
+      .put(`/recipes/${updateItem.id}`)
+      .send(updateItem.id);
+    })
+    .then(function(res) {
+      expect(res).to.have.status(200);
+      expect(res).to.be.json;
+      expect(res).to.be.a('object');
+      expect(res, body).to.deep.equal(updateItem);
+    });
+  });
+
+  //Tests for DELETE
+  it('should delete items on DELETE', function() {
+    return chai.request(app)
+    .get('/recipes')
+    .then(function(res) {
+      return chai.request(app)
+      .delete(`/recipes/${res.body[0].id}`)
+    })
+    .then(function(res) {
+      expect(res).to.have.status(204);
+    });
+  });
+});
