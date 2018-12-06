@@ -173,7 +173,7 @@ describe('Recipes', function() {
       expect(res.body.length).to.be.at.least(1);
       const expectedGETKeys = ['name', 'ingredients'];
       res.body.forEach(function(item) {
-        expect(res).to.include.keys(expectedGETKeys);
+        expect(item).to.include.keys(expectedGETKeys);
       });
     });
   });
@@ -188,9 +188,9 @@ describe('Recipes', function() {
     .then(function(res) {
       expect(res).to.have.status(201);
       expect(res).to.be.json;
-      expect(res).to.be.a('object');
-      expect(res).to.include.keys('id', 'name', 'ingredients');
-      expect(res).body.to.deep.equal(Object.assign(newItem, {id: res.body.id}));
+      expect(res.body).to.be.a('object');
+      expect(res.body).to.include.keys('id', 'name', 'ingredients');
+      expect(res.body).to.deep.equal(Object.assign(newItem, {id: res.body.id}));
     });
   });
 
@@ -200,19 +200,20 @@ describe('Recipes', function() {
       name: 'crackers',
       ingredients: 'a box of crackers'
     };
-    return chai.request(app)
-    .get('/recipes')
-    .then(function(res) {
-      updateItem.id = res.body[0].id;
-      return chai.request(app)
-      .put(`/recipes/${updateItem.id}`)
-      .send(updateItem.id);
+    return chai
+      .request(app)
+      .get('/recipes')
+      .then(function(res) {
+        updateItem.id = res.body[0].id;
+        return chai.request(app)
+        .put(`/recipes/${updateItem.id}`)
+        .send(updateItem);
     })
     .then(function(res) {
       expect(res).to.have.status(200);
       expect(res).to.be.json;
-      expect(res).to.be.a('object');
-      expect(res, body).to.deep.equal(updateItem);
+      expect(res.body).to.be.a('object');
+      expect(res.body).to.deep.equal(updateItem);
     });
   });
 
