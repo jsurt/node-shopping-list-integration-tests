@@ -171,7 +171,7 @@ describe('Recipes', function() {
       expect(res).to.be.json;
       expect(res).to.be.a('object');
       expect(res.body.length).to.be.at.least(1);
-      const expectedGETKeys = ['id', 'name', 'ingredients'];
+      const expectedGETKeys = ['name', 'ingredients'];
       res.body.forEach(function(item) {
         expect(res).to.include.keys(expectedGETKeys);
       });
@@ -189,7 +189,6 @@ describe('Recipes', function() {
       expect(res).to.have.status(201);
       expect(res).to.be.json;
       expect(res).to.be.a('object');
-      expect(res).id.to.not.equal(null);
       expect(res).to.include.keys('id', 'name', 'ingredients');
       expect(res).body.to.deep.equal(Object.assign(newItem, {id: res.body.id}));
     });
